@@ -1,95 +1,108 @@
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
 #include <time.h>
 #define MAX 255
 
 char nahodny_polynom(float *q,char rad,char k){
-	char i,j;
+	char return_value;
 	float min_rand,max_rand,range,koeficienty[MAX],K[MAX],A[MAX],B[MAX];
-	int korene,pocet_k,stupen,pom;
+	int i,j,korene,stupen,pom;
 	
 	min_rand=-5.0;
 	max_rand=5.0;
-	pocet_k=0;
 	range=max_rand-min_rand;
 	stupen=(int)rad;
 	pom=(int)k;
 	
-	if(pom>stupen){
-		return printf("FAILED");
+	if(k>stupen){
+		return return_value='0';
 	}
 	
-	else {
-		if(rad=='0'){
-			while(k!='0'&& k!='1'){
-				return printf("FAILED");
-			}	
-		}	
-	else if(rad=='1'){
-		while(k!='1'){
-			return printf("FAILED");	
+	else if(stupen==0){
+		if(pom==0){
+			q[0]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
+			return return_value='1';
 		}
 	}
+		
+	else if(stupen==1){
+		if(pom==0){
+			return return_value='0';	
+		}
+		else{
+			q[0]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
+			return return_value='1';
+		}
+	}
+	
 	else if(stupen%2==0){
-		while((pom%2)!=0){
-		 	return printf("FAILED");
+		if(pom%2==1){
+			 return return_value='0';
 		}
-		while(k=='0'){
-			return printf("FAILED");
-		}
-	}		
-	else if(stupen%2==1){
-		while((pom%2)!=1){
-			return printf("FAILED");
+		if(pom==0 && stupen>2){
+			return return_value='0';
 		}
 	}
 			
-	printf("KORENE:\n");
-	for(i='0';i<k;i++){
+	else if(stupen%2==1){
+		if(pom%2==0){
+			return return_value='0';
+		}
+		if(pom==1){
+			q[0]=range*((((float)rand())/(float)RAND_MAX))+0.;
+			return return_value='1';
+		}
+	}
+
+	for(i=0;i<pom;i++){
 		K[i]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
-		printf("%.3lf\n",K[i]);
-		pocet_k++;
 	}
 	
-	}	
-	
-	A['0']=1.;
-	A['1']=K['0'];
-	B['0']=0.;
-	
-	printf("\n");
-	printf("%.1lf ",A['0']);
-	printf("%.1lf\n",A['1']);
-	
-	printf("VYMENA\n");
-	printf("%.3lf ",B['0']);
-	for(i='1';i<k;i++){
-		B[i]=A[i-1];
-		printf("%.3lf ",B[i]);
-	}	
-	printf("\n");
-	for(i='0';i<k;i++){
-		B[i]=K['1']*B[i];
-		printf("%.3lf ",B[i]);
+	for(i=0;i<255;i++){
+		A[i]=0.;
+		B[i]=0.;
+		q[i]=0.;
 	}
-	printf("\nVysledok\n");
-	for(i='0';i<k;i++){
-		koeficienty[i]=A[i]+B[i];
-		printf("%.3lf ",koeficienty[i]);
+			
+	A[0]=1.;
+	A[1]=K[0];
+	
+	for(j=1;j<pom;j++){
+		for(i=0;i<pom+1;i++){
+			B[0]=0.;
+			B[i]=K[j]*A[i-1];
+			q[i]=A[i]+B[i];	
+		}
+		for(i=0;i<pom+1;i++){
+			A[i]=q[i];
+		}
 	}
+	return return_value='1';
 }
 
-
 main(){
-	char stupen,koren,polynom;
-	float *smernik;
+	char rad,k,polynom;
+	int stupen,koren;
+	float koeficienty[MAX];
 
 	srand(time(NULL));
 	printf("Zadaj najvacsi stupen polynoumu:");
-	scanf(" %c",&stupen);
+	scanf("%d",&stupen);
+	while(stupen<0 || stupen>255){
+		printf("Znovu zadaj najvacsi stupen polynoumu:");
+		scanf("%d",&stupen);
+	}
 	printf("Zadaj pocet realnych korenov polynomu:");
-	scanf(" %c",&koren);
+	scanf("%d",&koren);
+	while(koren<0 || stupen>255){
+		printf("Znovu zadaj pocet realnych korenov polynomu:");
+		scanf("%d",&koren);
+	}
 	
-	polynom=nahodny_polynom(&smernik,stupen,koren);
+	rad=(char)stupen;
+	k=(char)koren;
+	polynom=nahodny_polynom(koeficienty,rad,k);
+	printf("%c",polynom);
+	return(0);
 }
+
