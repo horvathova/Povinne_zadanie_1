@@ -81,7 +81,7 @@ char nahodny_polynom(float *q,char rad,char k){
 }
 
 main(){
-	char rad,k,polynom;
+	char rad,k,polynom,*smernik;
 	int stupen,koren;
 	float koeficienty[MAX];
 
@@ -99,10 +99,15 @@ main(){
 		scanf("%d",&koren);
 	}
 	
+	if((smernik=malloc(koren*sizeof(float)))==NULL){
+		printf("FAILED");
+		polynom='0';
+	}
+	
 	rad=(char)stupen;
 	k=(char)koren;
 	polynom=nahodny_polynom(koeficienty,rad,k);
 	printf("%c",polynom);
-	return(0);
+	free(smernik);
 }
 
