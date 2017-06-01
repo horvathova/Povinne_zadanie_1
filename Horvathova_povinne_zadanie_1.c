@@ -68,9 +68,8 @@ char nahodny_polynom(float *q, char rad, char k){
 	
     for(i=0;i<(int)k;i++){
         korene[i]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
-        printf("%.1lf ",korene[i]);
     }
-	printf("\n");
+
 	for(i=0;i<255;i++){
 		A[i]=0.;
 		B[i]=0.;
