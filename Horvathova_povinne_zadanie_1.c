@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX 255
 #define FAIL '0'
 #define OK '1'
 
 char nahodny_polynom(float *q, char rad, char k){
-	float min_rand, max_rand, range, korene[MAX], A[MAX], B[MAX];
+	float min_rand, max_rand, range, *korene, *A, *B;
 	int i,j;
 	
 	min_rand=-5.0;
@@ -60,13 +59,12 @@ char nahodny_polynom(float *q, char rad, char k){
 	
     for(i=0;i<(int)k;i++){
         korene[i]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
+        printf("%lf ",korene[i]);
+        
     }
 
-	for(i=0;i<255;i++){
-		A[i]=0.;
-		B[i]=0.;
-		q[i]=0.;
-	}
+	A=calloc(k,sizeof(float));
+	B=calloc(k+1,sizeof(float));
 			
 	A[0]=1.;
 	A[1]=korene[0];
@@ -104,7 +102,7 @@ main(){
 		printf("Znovu zadaj pocet realnych korenov polynomu:");
 		scanf("%d",&koren);
 	}
-	if((koeficienty=malloc((stupen+1)*sizeof(float)))==NULL){
+	if((koeficienty=calloc((stupen+1),sizeof(float)))==NULL){
 		return FAIL;
 	}
 	
@@ -115,9 +113,9 @@ main(){
 	
 	if(polynom!='0'){
 		for(i=0;i<stupen+1;i++){
-		printf("%.2f ",koeficienty[i]);
+		printf("x^%d %.2f\n", rad, koeficienty[i]);
+		rad--;
 		}
 	}
 	//free(koeficienty);
 }
-
