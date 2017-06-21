@@ -30,9 +30,9 @@ char nahodny_polynom(float *q, char rad, char k){
 		}
 		
 		else if(k==1){
-            q[0]=1;
+            		q[0]=1;
 			q[1]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
-        return OK; 
+        		return OK; 
 		}
 	}
 	
@@ -61,12 +61,12 @@ char nahodny_polynom(float *q, char rad, char k){
 	}
 	
 	korene=malloc(k*sizeof(float));	
-    for(i=0;i<(int)k;i++){
-        korene[i]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
-        printf("%lf ",korene[i]);
-    }
-	printf("\n");
+    	for(i=0;i<(int)k;i++){
+        	korene[i]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
+       		printf("%lf ",korene[i]);
+    	}
 	
+	printf("\n");
 	A=calloc(k,sizeof(float));
 	B=calloc(k+1,sizeof(float));
 	
@@ -103,7 +103,6 @@ char nahodny_polynom(float *q, char rad, char k){
 		}
 		
 		printf("\n");
-		
 		for(i=0;i<(int)k+1;i++){
 			POLY[i]=q[i];
 			q[i]=0;
