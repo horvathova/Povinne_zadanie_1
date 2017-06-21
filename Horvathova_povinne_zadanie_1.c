@@ -55,7 +55,7 @@ char nahodny_polynom(float *q, char rad, char k){
 		
 		if(k==1){
 			q[0]=1;
-			q[1]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
+			q[rad]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
 			return OK;
 		}
 	}
