@@ -6,155 +6,158 @@
 #define FAIL '0'
 #define OK '1'
 
-char nahodny_polynom(float *q, char rad, char k){
-	float min_rand, max_rand, range, *korene, *A, *B, *KVADR, *POLY;
+double min_rand = -5.0;
+double max_rand = 5.0;
+
+double* generuj_korene_vsucine(char k) {
+	int i;
+
+	double *korene = malloc(k * sizeof(double));
+	double range = max_rand - min_rand;
+
+	for (i = 0; i<(int)k; i++) {
+		korene[i] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
+	}
+	return korene;
+}
+
+double* generuj_korenovy_polynom(char rad, char k, double *korene){
 	int i,j;
+	double *A, *B, *POLY;
+
+	A = calloc(k, sizeof(double));
+	B = calloc(k + 1, sizeof(double));
+	POLY = calloc(k + 1, sizeof(double));
+
+	A[0] = 1;
+	A[1] = korene[0];
+	for (j = 1; j<(int)k; j++) {
+		for (i = 0; i<(int)k + 1; i++) {
+			B[0] = 0;
+			B[i + 1] = korene[j] * A[i];
+			POLY[i] = A[i] + B[i];
+		}
+
+		for (i = 0; i<(int)k + 1; i++) {
+			A[i] = POLY[i];
+		}
+	}
+
+	return POLY;
+}
+
+double* generuj_zvysny_polynom(char rad, char k){
+	int pocet = rad - k;
+	double *KVADR = calloc(pocet, sizeof(double));
+	double range = max_rand - min_rand;
+
+	KVADR[0] = 1;
+	KVADR[pocet] = range*((double)rand()) / ((double)RAND_MAX) + 0.;
+	return KVADR;
+}
+
+double* vynasob_polynomy(double *prvy, double *druhy, char rad, char k){
+	double *final=malloc(rad);
+	int i, j;
+
+	for(i=0; i<(char)rad+k;i++){
+		final[i] = 0;
+	}
+
+	for (i = 0; i<=(int)k; i++) {
+		for (j = 0; j<=(int)rad-k; j++) {
+			final[i + j] += prvy[i] * druhy[j];
+		}
+	}
+	return final;
+}
+
+char nahodny_polynom(double *q, char rad, char k) {
+	double *korene, *korenovy_polynom, *zvysny_polynom;
+	int i;
 	unsigned char pocet;
-	
-	min_rand=-5.0;
-	max_rand=5.0;
-	range=max_rand-min_rand;
-	
-	if(k>rad){
-		return FAIL;
-	}
-	
-	if(rad==0){
-		q[0]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
+	double range = max_rand - min_rand;
+
+	if (rad == 0) {
+		q[0] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
 		return OK;
-	}	
-	
-	if(rad==1){
-		if(k==0){
-			return FAIL;	
-		}
-		
-		else if(k==1){
-            		q[0]=1;
-			q[1]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
-        		return OK; 
-		}
 	}
-	
-	if((int)rad%2==0){
-		if((int)k%2==1){
-			 return FAIL;
-		}	
-		
-		else if(k==0){
-			q[0]=1;
-			q[rad]=range*((float)rand())/((float)RAND_MAX)+0.;
-			return OK;		
-		}
-	}
-			
-	if((int)rad%2==1){
-		if((int)k%2==0){
+
+	q[0] = 1;
+	if (rad == 1) {
+		if (k == 0) {
 			return FAIL;
 		}
-		
-		if(k==1){
-			q[0]=1;
-			q[rad]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
+
+		else {
+			q[1] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
 			return OK;
 		}
 	}
-	
-	korene=malloc(k*sizeof(float));	
-    	for(i=0;i<(int)k;i++){
-        	korene[i]=range*((((float)rand())/(float)RAND_MAX))+min_rand;
-       		printf("%lf ",korene[i]);
-    	}
-	
-	printf("\n");
-	A=calloc(k,sizeof(float));
-	B=calloc(k+1,sizeof(float));
-	
-	A[0]=1;
-	A[1]=korene[0];
-	for(j=1;j<(int)k;j++){
-		for(i=0;i<(int)k+1;i++){
-			B[0]=0;
-			B[i+1]=korene[j]*A[i];
-			q[i]=A[i]+B[i];
-			
+
+	if ((int)rad % 2 == 0) {
+		if ((int)k % 2 == 1) {
+			return FAIL;
 		}
-		
-		for(i=0;i<(int)k+1;i++){
-			A[i]=q[i];
-		}	
+
+		else if (k == 0) {
+			q[rad] = range*((double)rand()) / ((double)RAND_MAX) + 0.;
+			return OK;
+		}
 	}
 
-	printf("POLYNOM:\n");
-	for(i=0;i<(int)k+1;i++){
-		printf("%.2lf ",q[i]);
+	if ((int)rad % 2 == 1) {
+		if ((int)k % 2 == 0) {
+			return FAIL;
+		}
+
+		if (k == 1) {
+			q[rad] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
+			return OK;
+		}
 	}
-	
-	if(k<rad){
-		pocet=rad-k;
-		KVADR=calloc(pocet, sizeof(float));
-		POLY=calloc(k+1, sizeof(float));
-		
-		KVADR[0]=1;
-		KVADR[pocet]=range*((float)rand())/((float)RAND_MAX)+0.;
-		printf("KVADR:\n");
-		for(i=0;i<pocet+1;i++){
-			printf("%.2lf ",KVADR[i]);
-		}
-		
-		printf("\n");
-		for(i=0;i<(int)k+1;i++){
-			POLY[i]=q[i];
-			q[i]=0;
-		}
-		
-		for(i=0;i<(int)rad;i++){
-			for(j=0;j<(int)pocet+1;j++){
-				q[i+j]+= POLY[i]*KVADR[j];
-			}	
-		}
-		
+
+	korene = generuj_korene_vsucine(k);
+	korenovy_polynom = generuj_korenovy_polynom(rad, k, korene);
+
+	if (k<rad) {
+		zvysny_polynom = generuj_zvysny_polynom(rad, k);
+		q=vynasob_polynomy(korenovy_polynom, zvysny_polynom, rad, k);
+		return OK;
 	}
-	
-	printf("\n");
+
 	return OK;
 }
 
-main(){
-	char rad,k,polynom;
-	int stupen,koren,i;
-	float *koeficienty;
+int main() {
+	char rad, k, polynom;
+	int stupen, koren;
+	double *koeficienty;
 
 	srand(time(NULL));
 	printf("Zadaj najvacsi stupen polynoumu:");
-	scanf("%d",&stupen);
-	while(stupen<0 || stupen>255){
+	scanf("%d", &stupen);
+	while (stupen<0 || stupen>255) {
 		printf("Znovu zadaj najvacsi stupen polynoumu:");
-		scanf("%d",&stupen);
+		scanf("%d", &stupen);
 	}
-	
+
 	printf("Zadaj pocet realnych korenov polynomu:");
-	scanf("%d",&koren);
-	while(koren<0 || stupen>255){
+	scanf("%d", &koren);
+	while (koren<0 || stupen>255 || koren>stupen) {
 		printf("Znovu zadaj pocet realnych korenov polynomu:");
-		scanf("%d",&koren);
+		scanf("%d", &koren);
 	}
-	
-	if((koeficienty=calloc((stupen+1),sizeof(float)))==NULL){
+
+	if ((koeficienty = calloc(stupen + 1, sizeof(double))) == NULL) {
 		return FAIL;
 	}
-	
-	rad=(char)stupen;
-	k=(char)koren;
-	polynom=nahodny_polynom(koeficienty,rad,k);
-	printf("hodnota: %c\n",polynom);
-	
-	if(polynom!='0'){
-		for(i=0;i<stupen+1;i++){
-		printf("x^%d %.2f\n", rad, koeficienty[i]);
-		rad--;
-		}
-	}
-	
+
+	rad = (char)stupen;
+	k = (char)koren;
+	polynom = nahodny_polynom(koeficienty, rad, k);
+	printf("hodnota: %c\n", polynom);
+	getchar();
+	getchar();
 	//free(koeficienty);
 }
