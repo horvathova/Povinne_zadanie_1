@@ -86,6 +86,7 @@ char nahodny_polynom(double *q, char rad, char k) {
 
 	if (rad == 0) {
 		q[0] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
+		printf("Vysledny polynom\n%.3lfx^%d", q[0], rad);
 		return OK;
 	}
 
@@ -95,7 +96,9 @@ char nahodny_polynom(double *q, char rad, char k) {
 		}
 
 		else if (k == 0) {
+			q[0] = 1.;
 			q[rad] = range*((double)rand()) / ((double)RAND_MAX) + 0.;
+			printf("Vysledny polynom\n%.3lfx^%d %.3lfx^%d", q[0],rad, q[rad],k);
 			return OK;
 		}
 	}
