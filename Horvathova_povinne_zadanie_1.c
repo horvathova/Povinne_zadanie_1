@@ -21,7 +21,7 @@ double* generuj_korene_vsucine(char k) {
 	return korene;
 }
 
-double* generuj_korenovy_polynom(char rad, char k, double *korene){
+double* generuj_korenovy_polynom(char k, double *korene){
 	int i,j;
 	double *A, *B, *POLY;
 
@@ -31,15 +31,22 @@ double* generuj_korenovy_polynom(char rad, char k, double *korene){
 
 	A[0] = 1;
 	A[1] = korene[0];
-	for (j = 1; j<(int)k; j++) {
-		for (i = 0; i<(int)k + 1; i++) {
-			B[0] = 0;
-			B[i + 1] = korene[j] * A[i];
-			POLY[i] = A[i] + B[i];
-		}
 
-		for (i = 0; i<(int)k + 1; i++) {
-			A[i] = POLY[i];
+	if (k == 1) {
+		return A;
+	}
+
+	else{
+		for (j = 1; j<(int)k; j++) {
+			for (i = 0; i<(int)k + 1; i++) {
+				B[0] = 0;
+				B[i + 1] = korene[j] * A[i];
+				POLY[i] = A[i] + B[i];
+			}
+
+			for (i = 0; i<(int)k + 1; i++) {
+				A[i] = POLY[i];
+			}
 		}
 	}
 
@@ -48,12 +55,12 @@ double* generuj_korenovy_polynom(char rad, char k, double *korene){
 
 double* generuj_zvysny_polynom(char rad, char k){
 	int pocet = rad - k;
-	double *KVADR = calloc(pocet, sizeof(double));
+	double *zvysny = calloc(pocet, sizeof(double));
 	double range = max_rand - min_rand;
 
-	KVADR[0] = 1;
-	KVADR[pocet] = range*((double)rand()) / ((double)RAND_MAX) + 0.;
-	return KVADR;
+	zvysny[0] = 1;
+	zvysny[pocet] = range*((double)rand()) / ((double)RAND_MAX) + 0.;
+	return zvysny;
 }
 
 double* vynasob_polynomy(double *prvy, double *druhy, char rad, char k){
@@ -75,24 +82,11 @@ double* vynasob_polynomy(double *prvy, double *druhy, char rad, char k){
 char nahodny_polynom(double *q, char rad, char k) {
 	double *korene, *korenovy_polynom, *zvysny_polynom;
 	int i;
-	unsigned char pocet;
 	double range = max_rand - min_rand;
 
 	if (rad == 0) {
 		q[0] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
 		return OK;
-	}
-
-	q[0] = 1;
-	if (rad == 1) {
-		if (k == 0) {
-			return FAIL;
-		}
-
-		else {
-			q[1] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
-			return OK;
-		}
 	}
 
 	if ((int)rad % 2 == 0) {
@@ -110,19 +104,32 @@ char nahodny_polynom(double *q, char rad, char k) {
 		if ((int)k % 2 == 0) {
 			return FAIL;
 		}
-
-		if (k == 1) {
-			q[rad] = range*((((double)rand()) / (double)RAND_MAX)) + min_rand;
-			return OK;
-		}
 	}
 
 	korene = generuj_korene_vsucine(k);
-	korenovy_polynom = generuj_korenovy_polynom(rad, k, korene);
+	printf("KORENE V SUCINE\n");
+	for (i = 0; i < (int)k; i++) {
+		printf("%.3lf ", korene[i]);
+	}
+
+	korenovy_polynom = generuj_korenovy_polynom(k, korene);
+	printf("\nVYGENEROVANY POLYNOM %d STUPNA\n",k);
+	for (i = 0; i <= (int)k; i++) {
+		printf("%.3lf ", korenovy_polynom[i]);
+	}
 
 	if (k<rad) {
 		zvysny_polynom = generuj_zvysny_polynom(rad, k);
+		printf("\nZVYSNY POLYNOM %d STUPNA\n", rad-k);
+		for (i = 0; i <= (int)rad-k; i++) {
+			printf("%.3lf ", zvysny_polynom[i]);
+		}
+
+		printf("\nVYNASOBENE POLYNOMY %d STUPNA\n",rad);
 		q=vynasob_polynomy(korenovy_polynom, zvysny_polynom, rad, k);
+		for (i = 0; i <= (int)rad; i++) {
+			printf("%.3lf ", q[i]);
+		}
 		return OK;
 	}
 
@@ -156,7 +163,7 @@ int main() {
 	rad = (char)stupen;
 	k = (char)koren;
 	polynom = nahodny_polynom(koeficienty, rad, k);
-	printf("hodnota: %c\n", polynom);
+	printf("\nhodnota: %c\n", polynom);
 	getchar();
 	getchar();
 	//free(koeficienty);
