@@ -81,7 +81,7 @@ double* vynasob_polynomy(double *prvy, double *druhy, char rad, char k){
 
 char nahodny_polynom(double *q, char rad, char k) {
 	double *korene, *korenovy_polynom, *zvysny_polynom;
-	int i;
+	int i, pocet;
 	double range = max_rand - min_rand;
 
 	if (rad == 0) {
@@ -130,8 +130,10 @@ char nahodny_polynom(double *q, char rad, char k) {
 
 		printf("\nVYNASOBENE POLYNOMY %d STUPNA\n",rad);
 		q=vynasob_polynomy(korenovy_polynom, zvysny_polynom, rad, k);
+		pocet = (int)rad;
 		for (i = 0; i <= (int)rad; i++) {
-			printf("%.3lf ", q[i]);
+			printf("%.3lfx^%d ", q[i], pocet);
+			pocet--;
 		}
 		return OK;
 	}
