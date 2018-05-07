@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define FAIL '0'
-#define OK '1'
+#define OK   '1'
 
 double min_rand = -3.0;
 double max_rand = 3.0;
@@ -49,6 +49,8 @@ double* generuj_korenovy_polynom(char k, double *korene) {
 		}
 	}
 
+    // TODO: dynamicky allokovane bloky pamati treba uvolnovat
+
 	/*free(A);
 	free(B);*/
 	return POLY;
@@ -72,15 +74,18 @@ double* generuj_komplex_polynom() {
 	const double range = max_rand - min_rand;
 	double *kvadraticky = malloc(3 * sizeof(double));
 
-	a = range*((double)rand() / (double)RAND_MAX) + min_rand;
+	a = range*((double)rand() / (double)RAND_MAX) + min_rand;                   // -3  az 3
 	if (a < 0) {
-		c = -1 * (range + 5)*((double)rand() / (double)RAND_MAX) + min_rand;
+		c = -1 * (range + 5)*((double)rand() / (double)RAND_MAX) + min_rand;    // -14 az -3
 	}
 	else {
-		c = (range + 5)*((double)rand() / (double)RAND_MAX) + 2*max_rand;
+		c = (range + 5)*((double)rand() / (double)RAND_MAX) + 2*max_rand;       //  6  az 17
 	}
 
-	b = (range - 4)*((double)rand() / (double)RAND_MAX) + min_rand;
+	b = (range - 4)*((double)rand() / (double)RAND_MAX) + min_rand;             // -3  az -1
+
+    // TODO: zbavte sa tohto cyklu
+
 	while (b* b > 4 * a * c) {
 		b = (range - 4)*((double)rand() / (double)RAND_MAX) + min_rand;
 	}
@@ -97,6 +102,8 @@ double* generuj_zvysny_polynom(const char rad, const char k) {
 	int kvadr = pocet / 2;
 	int j = 4;
 	bool prva_iter = true;
+
+    // TODO: tu allokujete niektore veci, ktorych adresu vzapate zabudate
 
 	double *pom = malloc(pocet * sizeof(double));
 	double *pom2 = malloc(pocet * sizeof(double));
@@ -140,6 +147,8 @@ double* generuj_zvysny_polynom(const char rad, const char k) {
 		zvysny = vynasob_polynomy(kvadraticky, pom, 2, pocet -2);
 	}
 
+    // TODO: dynamicky allokovane veci je NUTNE uvolnovat
+
 	/*free(kvadraticky);
 	free(pom);
 	free(pom2);*/
@@ -179,6 +188,11 @@ char nahodny_polynom(double *q, char rad, char k) {
 
 	korene = generuj_korene_vsucine(k);
 
+    printf("Vygenerovane korene: ");
+    for(i=0; i<k; i++)
+        printf("%f ", korene[i]);
+    printf("\n");
+
 	korenovy_polynom = generuj_korenovy_polynom(k, korene);
 	printf("\nVYGENEROVANY POLYNOM %d STUPNA\n", k);
 	for (i = 0; i <= (int)k; i++) {
@@ -199,9 +213,14 @@ char nahodny_polynom(double *q, char rad, char k) {
 			pocet--;
 		}
 
+
+        // TODO: segfault, zistit kde a preco
+
+        /*
 		free(korene);
 		free(korenovy_polynom);
 		free(zvysny_polynom);
+        */
 		return OK;
 	}
 
@@ -223,6 +242,7 @@ int main() {
 
 	printf("Zadaj pocet realnych korenov polynomu:");
 	scanf("%d", &koren);
+
 	while (koren<0 || stupen>255 || koren>stupen) {
 		printf("Znovu zadaj pocet realnych korenov polynomu:");
 		scanf("%d", &koren);
