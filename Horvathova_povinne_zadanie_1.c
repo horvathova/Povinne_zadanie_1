@@ -97,11 +97,16 @@ double* generuj_zvysny_polynom(const char rad, const char k) {
 
 	kvadraticky = generuj_komplex_polynom();
 	pom2 = vynasob_polynomy(kvadraticky, kvadraticky, 2, 2);
-
+	
 	if (kvadr / 2 != 1) {
 		pom = pom2;
 	}
-	else {			//ak je potrebny zvysny polynom stupna 4
+
+	else if (pocet == 4) {
+		return pom2;
+	}
+
+	else {	//ak je potrebny zvysny polynom stupna 4
 		zvysny = pom2;
 		pom = zvysny;
 	}
