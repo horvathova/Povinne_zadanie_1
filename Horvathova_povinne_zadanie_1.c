@@ -35,30 +35,31 @@ double* vynasob_polynomy(double *prvy, double *druhy, char const stupen1, char c
 }
 
 double* generuj_korenovy_polynom(char k, double *korene) {
-	double *A = malloc(k * sizeof(double));
+	double *A, *C = malloc(2 * sizeof(double));
 	double B[2];
-	double *vysledny = malloc((k + 1) * sizeof(double));
-	int i, j;
+	double *vysledny;
+	int i;
 
-	A[0] = 1.;
-	A[1] = korene[0];
+	C[0] = 1.;
+	C[1] = korene[0];
 
 	if (k == 1) {
-		return A;
+		return C;
 	}
 	else {
 		B[0] = 1.;
 
 		for (i = 1; i < k; i++) {
 			B[1] = korene[i];
-			vysledny = vynasob_polynomy(A, B, i, 1);
+			if (i == 1) {
+				vysledny = vynasob_polynomy(C, B, i, 1);
+				free(C);
+			}
+			else{
+				vysledny = vynasob_polynomy(A, B, i, 1);
+			}
 
-			if (i != k) {
-				A = vysledny;
-			}
-			else {
-				free(A);
-			}
+			A = vysledny;
 		}
 	}
 	
@@ -85,37 +86,39 @@ double* generuj_zvysny_polynom(const char rad, const char k) {
 	int kvadr = pocet / 2;
 	int j = 4;
 	int i;
-	bool prva_iter = true;
 	double *pom;
-	double *pom2 = malloc(pocet * sizeof(double));
-	double *kvadraticky = malloc(3 * sizeof(double));
-	double *zvysny = malloc(pocet * sizeof(double));
+	double *pom2;
+	double *kvadraticky;
+	double *zvysny;
 
 	if (pocet == 2) {
-		return zvysny = generuj_komplex_polynom();
+		return generuj_komplex_polynom();
 	}
 
 	kvadraticky = generuj_komplex_polynom();
 	pom2 = vynasob_polynomy(kvadraticky, kvadraticky, 2, 2);
 	
-	if (kvadr / 2 != 1) {
-		pom = pom2;
-	}
-
-	else if (pocet == 4) {
+	if (pocet == 4) {
+		free(kvadraticky);
 		return pom2;
 	}
 
-	else {	//ak je potrebny zvysny polynom stupna 4
-		zvysny = pom2;
-		pom = zvysny;
-	}
+	zvysny = pom2;
+	pom = zvysny;
+	free(kvadraticky);
 
 	for (i = 1; i < kvadr / 2; i++) {
 		kvadraticky = generuj_komplex_polynom();
 		pom2 = vynasob_polynomy(kvadraticky, kvadraticky, 2, 2);
 		zvysny = vynasob_polynomy(pom2, pom, 4, j);
+		free(pom);
+		free(kvadraticky);
 		pom = zvysny;
+
+		if (i != kvadr / 2 - 1) {
+			free(zvysny);
+		}
+
 		j += 4;
 	}
 
@@ -124,10 +127,9 @@ double* generuj_zvysny_polynom(const char rad, const char k) {
 		kvadraticky = generuj_komplex_polynom();
 		pom = zvysny;
 		zvysny = vynasob_polynomy(kvadraticky, pom, 2, pocet - 2);
+		free(kvadraticky);
+		free(pom);
 	}
-
-	free(kvadraticky);
-	free(pom2);
 
 	return zvysny;
 }
@@ -193,8 +195,8 @@ char nahodny_polynom(double *q, char rad, char k) {
 			pocet--;
 		}
 
-		free(korene);
 		free(korenovy_polynom);
+		free(korene);
 		free(zvysny_polynom);
 		
 		return OK;
@@ -207,8 +209,8 @@ int main() {
 	char rad, k, polynom;
 	int stupen, koren;
 	double *koeficienty;
-
 	srand(time(NULL));
+	
 	printf("Zadaj najvacsi stupen polynoumu:");
 	scanf("%d", &stupen);
 
